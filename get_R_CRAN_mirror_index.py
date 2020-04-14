@@ -2,15 +2,37 @@
 """
 Created on Tue Apr 14 16:50:57 2020
 
-@author: hyeongyu_yeo1
+@author: hyeongyuy
 
+예상 출력 결과:
+{{'default':
+    {file_name:                     <- .tar.gz 지운 파일 이름
+        name: file_name,            <- .tar.gz 포함 파일 이름
+        date: date,
+        size: size,
+        type: file
+        sub_dir: '-'}
+    {file_name:
+        name: file_name, 
+        ...
+        }
+        ...
+    },
+ {'folder_name(depth1)':
+    {'folder_name(depth2)':
+     {...
+      {file_name: ...}
+      }
+     }
+ },
+ {'folder_name(depth1)'
+     {file_name: ...}
+ }
+}
 """
-
 from bs4 import BeautifulSoup
 import requests
 import json
-
-BASE_URL = 'https://cran.biodisk.org/src/contrib/'
 
 def sep_dir_file(base_url, file= {}):
     source = BeautifulSoup(requests.get(base_url).text, 'html.parser')
@@ -59,7 +81,7 @@ class recur_url(object):
         self.rec_folder(self.BASE_URL)
         return self.file_dict
     
-create_ist = recur_url('https://cran.biodisk.org/src/contrib/00Archive/')
+create_ist = recur_url('https://cran.biodisk.org/src/contrib/4.0.0/')
 result = create_ist.get_folder_dict()
 
 with open('data.json', 'w') as f:

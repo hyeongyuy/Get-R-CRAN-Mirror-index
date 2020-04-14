@@ -6,13 +6,11 @@ Created on Tue Apr 14 16:50:57 2020
 
 """
 
-
 from bs4 import BeautifulSoup
 import requests
 import json
 
 BASE_URL = 'https://cran.biodisk.org/src/contrib/'
-
 
 def sep_dir_file(base_url, file= {}):
     source = BeautifulSoup(requests.get(base_url).text, 'html.parser')
@@ -26,6 +24,7 @@ def sep_dir_file(base_url, file= {}):
                 folder[lib_name.replace('/', '')] = new_url
             else:
                 if '.tar.gz' in lib_name:
+                    date, size = [str(r).replace('<td align=\"right\">', '').replace('</td>' ,'').strip() for r in tr.select('tr > td') if 'right' in str(r)]
                     file[lib_name.replace('.tar.gz','')] ={'name':lib_name, 'date':date, 'size':size, 'type': 'file', 'sub_dir' : '-'}
         except IndexError:
             print(tr)
@@ -60,12 +59,8 @@ class recur_url(object):
         self.rec_folder(self.BASE_URL)
         return self.file_dict
     
-create_ist = recur_url('https://cran.biodisk.org/src/contrib/')
+create_ist = recur_url('https://cran.biodisk.org/src/contrib/00Archive/')
 result = create_ist.get_folder_dict()
 
 with open('data.json', 'w') as f:
     json.dump(result, f)
-    
-    
-    
-    

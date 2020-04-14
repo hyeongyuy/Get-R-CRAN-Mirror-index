@@ -20,8 +20,7 @@ class recur_url(object):
     def sep_dir_file(self, base_url, file= {}):
         skip_data = {'file': [], 'others':[]}
         
-        with requests.session() as s:
-            source = BeautifulSoup(s.get(base_url).text, 'html.parser')
+        source = BeautifulSoup(requests.get(base_url).text, 'html.parser')
         trs = source.find_all("table")[0].find_all('tr')
         folder = {}
         
@@ -51,6 +50,7 @@ class recur_url(object):
             post = {i: pre}
             pre=post
         return post
+    
     
     def rec_folder(self, url):
         time.sleep(self.sleep_time)

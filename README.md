@@ -36,8 +36,6 @@
 ```
 * skip_data.json : 수집 안된 데이터
 ```
-{'file': '.tar.gz'으로 끝나는 파일 중 수집 안된 파일들
-'others': 기타 ([DIR] 항목 X & '.tar.gz'로 끝나지 않음)
-}
+{'skip_data': 기타 ([DIR] 항목 X & '.tar.gz'로 끝나지 않음)
 }
 ```

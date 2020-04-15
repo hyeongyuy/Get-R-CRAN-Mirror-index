@@ -79,16 +79,15 @@ class recur_url(object):
     def rec_folder(self, url):
         subfd, subfl, skip_data = self.sep_dir_file(url)
         
+        folderlist =[i for i in url.replace(self.BASE_URL, '').split('/') if i != '']
+        if len(folderlist) == 0:  
+            self.file_dict['default'] =  subfl
+            self.skip_data_dict['skip_data'] +=  skip_data['skip_data']
+            
         if len(subfd) ==  0:
-            folderlist =[i for i in url.replace(self.BASE_URL, '').split('/') if i != '']
-            if len(folderlist) == 0: 
-                self.file_dict['default'] =  subfl
-                self.skip_data_dict['skip_data'] +=  skip_data['skip_data']
-                self.rec_folder(url)
-            else:
-                folder_dict = self.mk_hiera_dict(folderlist, subfl)
-                self.file_dict =  dict(self.file_dict, **folder_dict)
-                self.skip_data_dict['skip_data'] +=  skip_data['skip_data']
+            folder_dict = self.mk_hiera_dict(folderlist, subfl)
+            self.file_dict =  dict(self.file_dict, **folder_dict)
+            self.skip_data_dict['skip_data'] +=  skip_data['skip_data']
         else:
             for url in subfd.values():
                 self.rec_folder(url)

@@ -14,7 +14,7 @@ class recur_url(object):
     def __init__(self, BASE_URL, sleep_time=1):
         self.BASE_URL = BASE_URL
         self.file_dict = {}
-        self.skip_data_dict = {'skip_data':''}
+        self.skip_data_dict = {'skip_data1': {},'skip_data2': {}}
         self.sleep_time=sleep_time
         self.start_time = time.time()
         
@@ -37,7 +37,7 @@ class recur_url(object):
     
     def sep_dir_file(self, base_url, file= {}):
         print('current url: {}'.format(base_url))
-        skip_data = {'skip_data': ''}
+        skip_data = {'skip_data1': {},'skip_data2': {}}
         source = self.get_source(base_url)
         trs = source.find_all("table")[0].find_all('tr')
         folder = {}
@@ -54,11 +54,10 @@ class recur_url(object):
                     except ValueError:
                         lib_name, date, size = [r.text.strip() for r in tr.select('tr > td') if 'right' in str(r)]
                     file[lib_name.replace('.tar.gz','')] ={'name':lib_name, 'date':date, 'size':size}
-                    continue
-                    
+                else:
+                    skip_data['skip_data1'] = dict(skip_data['skip_data1'], **{base_url:str(tr)})
             except IndexError:
-                pass
-            skip_data['skip_data'] += str(tr) + '\n'
+                skip_data['skip_data2'] = dict(skip_data['skip_data2'], **{base_url:str(tr)})
                 
         return folder, file, skip_data
 
@@ -74,15 +73,16 @@ class recur_url(object):
     def rec_folder(self, url):
         subfd, subfl, skip_data = self.sep_dir_file(url)
         
+        self.skip_data_dict['skip_data1'] =  dict(self.skip_data_dict['skip_data1'], **skip_data['skip_data1'])
+        self.skip_data_dict['skip_data2'] =  dict(self.skip_data_dict['skip_data2'], **skip_data['skip_data2'])
+            
         folderlist =[i for i in url.replace(self.BASE_URL, '').split('/') if i != '']
         if len(folderlist) == 0:  
             self.file_dict['default'] =  subfl
-            self.skip_data_dict['skip_data'] +=  skip_data['skip_data']
             
         if len(subfd) ==  0:
             folder_dict = self.mk_hiera_dict(folderlist, subfl)
             self.file_dict =  dict(self.file_dict, **folder_dict)
-            self.skip_data_dict['skip_data'] +=  skip_data['skip_data']
         else:
             for url in subfd.values():
                 self.rec_folder(url)

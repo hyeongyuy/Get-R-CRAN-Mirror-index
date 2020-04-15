@@ -10,11 +10,6 @@ import time
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
-
-session = requests.Session()
-
-
-
 class recur_url(object):  
     def __init__(self, BASE_URL, sleep_time=1):
         self.BASE_URL = BASE_URL
